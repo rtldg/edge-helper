@@ -41,7 +41,7 @@ public void OnPluginStart()
 
 public void OnMapStart()
 {
-	if (GetEngineVersion() == Engine_CSGO)
+	if (GetEngineVersion() != Engine_CSGO)
 	{
 		gI_DefaultBeam = PrecacheModel("sprites/laser.vmt", true);
 		gI_DefaultHalo = PrecacheModel("sprites/halo01.vmt", true);
