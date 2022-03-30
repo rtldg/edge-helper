@@ -34,9 +34,27 @@ int gI_LastDrawn[MAXPLAYERS+1];
 int gI_DefaultBeam;
 int gI_DefaultHalo;
 
+Cookie gH_EdgeHelperCookie = null;
+
 public void OnPluginStart()
 {
+	gH_EdgeHelperCookie = new Cookie("edgehelper", "Edge helper toggle", CookieAccess_Protected);
+	RegConsoleCmd("sm_edgehelper", Command_EdgeHelper, "Edge helper toggle");
+}
 
+bool EdgeHelperEnabled(int client)
+{
+	char data[2];
+	gH_EdgeHelperCookie.Get(client, data, sizeof(data));
+	return !data[0] || (data[0] == '1');
+}
+
+public Action Command_EdgeHelper(int client, int args)
+{
+	bool bEdge = EdgeHelperEnabled(client);
+	gH_EdgeHelperCookie.Set(client, (bEdge) ? "0" : "1");
+	PrintToChat(client, (bEdge) ? ":(" : ":)");
+	return Plugin_Handled;
 }
 
 public void OnMapStart()
@@ -176,6 +194,11 @@ void DrawBeam(int client, float startpoint[3], float endpoint[3])
 public void OnPlayerRunCmdPost(int client, int buttons, int impulse, const float vel[3], const float angles[3], int weapon, int subtype, int cmdnum, int tickcount, int seed, const int mouse[2])
 {
 	if (IsFakeClient(client))
+	{
+		return;
+	}
+
+	if (!EdgeHelperEnabled(client))
 	{
 		return;
 	}
